@@ -1,0 +1,128 @@
+{
+  "author": "CanLab",
+  "name": "liquid-staking",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "analyze": "cross-env ANALYZE=true next build",
+    "build": "next build",
+    "clean": "rm -rf .next node_modules/.cache build storybook-static out",
+    "dev": "next dev",
+    "lint:script:update": "eslint ./ --ext .ts --ext .tsx --color --fix",
+    "lint:script": "eslint ./ --ext .ts --ext .tsx --color",
+    "lint:style:update": "stylelint ./src/**/*.{css,scss} --fix",
+    "lint:style": "stylelint ./src/**/*.{css,scss}",
+    "lint": "run-s lint:script lint:style",
+    "prettier:check": "prettier -c **.{js,ts,tsx,css,scss}",
+    "prettier:update": "prettier -w **.{js,ts,tsx,css,scss}",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@popperjs/core": "2.8.4",
+    "@reach/accordion": "0.13.0",
+    "@reach/tabs": "0.13.0",
+    "@types/react": "17.0.34",
+    "@types/react-gtm-module": "^2.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "autoprefixer": "^10.4.0",
+    "bignumber.js": "9.0.1",
+    "dayjs": "1.10.7",
+    "eslint-config-next": "12.0.2",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "file-loader": "^6.2.0",
+    "fs-extra": "^10.0.0",
+    "lightweight-charts": "3.2.0",
+    "lodash": "4.17.21",
+    "lottie-react": "^2.2.1",
+    "next": "12.0.8",
+    "nouislider-react": "3.3.9",
+    "npm-run-all": "^4.1.5",
+    "react": "17.0.2",
+    "react-click-away-listener": "2.0.0",
+    "react-device-detect": "1.15.0",
+    "react-dom": "17.0.2",
+    "react-gtm-module": "^2.0.11",
+    "react-is": "17.0.1",
+    "react-popper": "2.2.4",
+    "react-use": "15.3.8",
+    "rebass": "4.0.7",
+    "replace": "^1.2.1",
+    "sass": "^1.43.2",
+    "sharp": "^0.29.3",
+    "styled-components": "5.1.0",
+    "typescript": "4.4.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@cosmjs/cosmwasm-stargate": "^0.28.4",
+    "@cosmjs/stargate": "^0.28.4",
+    "@next/bundle-analyzer": "^12.0.2",
+    "@reach/dialog": "0.12.1",
+    "@reach/portal": "0.12.1",
+    "@svgr/webpack": "^6.2.1",
+    "@types/lodash": "^4.14.182",
+    "@types/react-is": "^17.0.3",
+    "@types/rebass": "4.0.7",
+    "@types/styled-components": "5.1.3",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-inline-react-svg": "^2.0.1",
+    "babel-plugin-styled-components": "^2.0.7",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.30.0",
+    "eslint-plugin-dollar-sign": "^1.0.2",
+    "eslint-plugin-react": "^7.26.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "glob": "^7.2.0",
+    "husky": "^4",
+    "immer": "^9.0.12",
+    "lint-staged": "^11.2.3",
+    "node-sass-glob-importer": "^5.3.2",
+    "polished": "4.0.5",
+    "postcss": "^8.4.4",
+    "postcss-loader": "^6.2.1",
+    "postcss-scss": "^4.0.2",
+    "prettier": "^2.4.1",
+    "react-spring": "8.0.27",
+    "react-toastify": "^9.0.1",
+    "react-use-gesture": "9.0.0-beta.11",
+    "resolve-url-loader": "^4.0.0",
+    "stylelint": "^14.0.1",
+    "stylelint-color-format": "^1.1.0",
+    "stylelint-config-prettier": "^9.0.3",
+    "stylelint-config-recess-order": "^2.5.0",
+    "stylelint-config-standard": "^23.0.0",
+    "stylelint-config-standard-scss": "^2.0.1",
+    "stylelint-order": "^5.0.0",
+    "tsconfig-paths-webpack-plugin": "^3.5.1",
+    "webpack": "^5"
+  },
+  "peerDependencies": {
+    "postcss": "^8.4.4",
+    "postcss-loader": "^6.2.1",
+    "postcss-scss": "^4.0.2"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "eslint --color",
+      "prettier -c"
+    ],
+    "src/**/*.scss": [
+      "stylelint --color",
+      "prettier -c"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "tsc --incremental false"
+    }
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "resolutions": {
+    "@types/react": "17.0.40"
+  }
+}

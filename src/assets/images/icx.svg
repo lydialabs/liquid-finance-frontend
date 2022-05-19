@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 26.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns:serif="http://www.serif.com/"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1920 1080"
+	 style="enable-background:new 0 0 1920 1080;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#1a334d;}
+	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#1a334d;}
+</style>
+<g transform="matrix(1,0,0,1,-135,0)">
+	<path class="st0" d="M1441.5,282.6l-117,117c25.2,41.4,39.6,89.1,39.6,141.3c0,149.4-120.6,270-270,270
+		c-51.3,0-99.9-14.4-141.3-39.6l-117,117c72,53.1,161.1,85.5,257.4,85.5c238.5,0,432-193.5,432-432
+		C1527,443.7,1495.5,354.6,1441.5,282.6z"/>
+	<path class="st0" d="M825,540c0-149.4,120.6-270,270-270c51.3,0,99.9,14.4,141.3,39.6l117-117c-72-53.1-161.1-85.5-257.4-85.5
+		c-238.5,0-432,193.5-432,432c0,96.3,31.5,185.4,85.5,257.4l117-117C839.4,639.9,825,591.3,825,540z"/>
+	<circle class="st1" cx="1527" cy="108" r="108"/>
+	<circle class="st1" cx="663" cy="972" r="108"/>
+</g>
+</svg>
