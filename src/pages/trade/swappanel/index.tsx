@@ -18,6 +18,8 @@ import { AppStoreInterface, useAppStore } from "store";
 import { Arch, arch } from "lib";
 import { ZERO } from "consts/currency";
 import { CONTRACT_ADDRESS } from "helpers/env";
+import { Field, ONE } from "components/util/chart";
+import { SwapStoreInterface, useSwapStore } from "store/swap.store";
 
 const FlipButton = styled(Box)`
   cursor: pointer;
@@ -47,9 +49,11 @@ const AutoColumn = styled(Box)<{
 interface SwapPanelProps {
   currencyList?: (Currency | undefined)[];
 }
-const FEE = new BigNumber(99 / 100);
 export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
-  const [{ userAddress: account, ...appStore }, updateAppStore] = useAppStore();
+  const [{ userAddress: account, statusInfo, ...appStore }, updateAppStore] =
+    useAppStore();
+
+  const [{ pairSelected }, updateSwapStore] = useSwapStore();
 
   const [init, setInit] = useState<boolean>(true);
 
@@ -59,6 +63,13 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
   const [swapInputValue, setSwapInputValue] = useState<string>("");
   const [forInputValue, setForInputValue] = useState<string>("");
   const [fieldInput, setFieldInput] = useState<string>("");
+  const ratioARCH = new BigNumber(statusInfo?.ratio || "1");
+  const ratio =
+    swapValue?.symbol === "ARCH" && forValue?.symbol === "lARCH"
+      ? ONE.div(ratioARCH)
+      : ratioARCH;
+
+  console.log("statusInfo?.ratio", statusInfo?.ratio);
 
   useEffect(() => {
     if (init && currencyList?.length) {
@@ -67,6 +78,17 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
       setInit(false);
     }
   }, [currencyList]);
+
+  useEffect(() => {
+    updateSwapStore((draf: SwapStoreInterface) => {
+      draf.pairSelected = {
+        [Field.INPUT]: swapValue,
+        [Field.OUTPUT]: forValue,
+      };
+    });
+  }, [swapValue?.symbol, forValue?.symbol]);
+
+  const FEE = swapValue?.symbol === "ARCH" ? ONE : new BigNumber(99 / 100);
 
   const handleTypeInput = React.useCallback(
     (value: string) => {
@@ -83,7 +105,7 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
   const handleTypeOutput = React.useCallback(
     (value: string) => {
       const swapValue = value
-        ? new BigNumber(value).times(FEE).dp(5).toFormat()
+        ? new BigNumber(value).times(ratio).times(FEE).dp(5).toFormat()
         : "";
       setForInputValue(value);
       setSwapInputValue(swapValue);
@@ -129,7 +151,7 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
 
       setSwapInputValue(value.toFormat());
       const forValue = value
-        ? new BigNumber(value).times(FEE).dp(5).toFormat()
+        ? new BigNumber(value).times(ratio).times(FEE).dp(5).toFormat()
         : "";
       setForInputValue(forValue);
       setFieldInput("SWAP");
@@ -334,7 +356,9 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
           )
         )
       ? `Insufficient ${appStore?.larchBalance?.symbol}`
-      : false;
+      : "";
+
+  const isEmpty = swapInputValue === "" && forInputValue === "";
 
   return (
     <>
@@ -348,7 +372,7 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
         <AutoColumn gap="md">
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">
-              {swapValue?.symbol !== "lARCH" ? `Stake` : `Swap`}
+              {swapValue?.symbol === "ARCH" ? `Stake` : `Swap`}
             </Typography>
             <Typography as="div" hidden={!account}>
               Wallet:{" "}
@@ -417,20 +441,26 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>
-          {/* <Flex alignItems="center" justifyContent="space-between">
+          <Flex alignItems="center" justifyContent="space-between">
             <Typography>Price impact</Typography>
 
             <Typography>{priceImpact}</Typography>
-          </Flex> */}
+          </Flex>
 
           <Flex justifyContent="center" mt={4}>
-            {!inputError ? (
-              <Button onClick={handleSwap}>Swap</Button>
-            ) : (
-              <Button disabled={!!account} color="primary" onClick={handleSwap}>
-                {account ? inputError : `Swap`}
-              </Button>
-            )}
+            <Button
+              disabled={!account || isEmpty || !!inputError}
+              color="primary"
+              onClick={handleSwap}
+            >
+              {account
+                ? isEmpty
+                  ? "Enter amount"
+                  : !!inputError
+                  ? inputError
+                  : "Swap"
+                : `Swap`}
+            </Button>
           </Flex>
         </AutoColumn>
       </BrightPanel>
@@ -442,8 +472,8 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {`${FEE} ${swapValue?.symbol || "-"} per ${
-              forValue?.symbol || "-"
+            {`${ratio.toFixed(4)} ${forValue?.symbol || "-"} per ${
+              swapValue?.symbol || "-"
             }`}
           </Typography>
 

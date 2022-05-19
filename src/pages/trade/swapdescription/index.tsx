@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Flex, Box } from "rebass/styled-components";
 import styled from "styled-components";
@@ -10,9 +10,11 @@ import {
   HEIGHT,
 } from "../../../components/organisms/chart/constant";
 import Spinner from "components/atom/spiner";
-import { generateChartData } from "components/util/chart";
+import { generateChartData, LineType, ONE } from "components/util/chart";
 import BigNumber from "bignumber.js";
 import dynamic from "next/dynamic";
+import { useAppStore } from "store";
+import { useSwapStore } from "store/swap.store";
 const TradingViewChart = dynamic(
   () => import("../../../components/organisms/chart"),
   { ssr: false }
@@ -71,13 +73,19 @@ const ChartContainer = styled(Box)`
 // };
 
 export default function SwapDescription() {
-  const [chartOption, setChartOption] = React.useState<{
-    type: CHART_TYPES;
-    period: CHART_PERIODS;
-  }>({
-    type: CHART_TYPES.AREA,
-    period: CHART_PERIODS["1H"],
-  });
+  // const [chartOption, setChartOption] = React.useState<{
+  //   type: CHART_TYPES;
+  //   period: CHART_PERIODS;
+  // }>({
+  //   type: CHART_TYPES.AREA,
+  //   period: CHART_PERIODS["1H"],
+  // });
+
+  const [
+    { userAddress: account, statusStakingInfo, ...appStore },
+    updateAppStore,
+  ] = useAppStore();
+  const [{ pairSelected }, updateSwapStore] = useSwapStore();
 
   const data = {};
   const loading = false;
@@ -114,26 +122,47 @@ export default function SwapDescription() {
   // const haslARCH = true;
   // const halARCH = true;
 
-  const pair = true;
-  const ratio = {
-    lARCHARCHratio: new BigNumber(1.0),
-  };
+  const pair = pairSelected.INPUT?.symbol !== "";
+  const ratio =
+    pairSelected.INPUT?.symbol === "ARCH" &&
+    pairSelected.OUTPUT?.symbol === "lARCH"
+      ? ONE.div(new BigNumber(statusStakingInfo?.ratio || "1"))
+      : new BigNumber(statusStakingInfo?.ratio || "1");
+  const pairName = `${pairSelected.INPUT?.symbol || "..."} / ${
+    pairSelected.OUTPUT?.symbol || "..."
+  }`;
+  const price = new BigNumber(1);
 
-  const queueData: any = React.useMemo(
-    () => generateChartData(ratio.lARCHARCHratio),
+  // const queueData: any = React.useMemo(
+  //   () => generateChartData(ratio, pairSelected),
 
-    [ratio.lARCHARCHratio]
-  );
+  //   [ratio, pairSelected.INPUT, pairSelected.OUTPUT]
+  // );
+  const [queueData, setQueueData] = useState<LineType[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const data: LineType[] = await generateChartData(pairSelected);
+      setQueueData(data);
+    })();
+  }, [pairSelected.INPUT?.symbol, pairSelected.OUTPUT?.symbol]);
+
+  console.log("queueData", queueData);
 
   return (
     <Box bg="bg2" flex={1} p={[5, 7]}>
       <Flex mb={5} flexWrap="wrap">
         <Box width={[1, 1 / 2]}>
           <Typography variant="h3" mb={2}>
-            lARCH/ARCH
+            {pairName}
           </Typography>
 
-          <Typography variant="p">{`1.0000 lARCH per ARCH`}</Typography>
+          <Typography variant="p">
+            {`${ratio?.toFixed(4) || "..."}
+                    ${pairSelected.OUTPUT?.symbol || "..."} per ${
+              pairSelected.INPUT?.symbol || "..."
+            } `}
+          </Typography>
         </Box>
       </Flex>
 
@@ -144,23 +173,23 @@ export default function SwapDescription() {
               <Spinner size={75} centered />
             ) : (
               <>
-                {chartOption.type === CHART_TYPES.AREA && (
-                  <TradingViewChart
-                    data={queueData}
-                    volumeData={queueData}
-                    width={width}
-                    type={CHART_TYPES.AREA}
-                  />
-                )}
+                {/* {chartOption.type === CHART_TYPES.AREA && ( */}
+                <TradingViewChart
+                  data={queueData}
+                  volumeData={queueData}
+                  width={width}
+                  type={CHART_TYPES.AREA}
+                />
+                {/* )} */}
 
-                {chartOption.type === CHART_TYPES.CANDLE && (
+                {/* {chartOption.type === CHART_TYPES.CANDLE && (
                   <TradingViewChart
                     data={data}
                     volumeData={data}
                     width={width}
                     type={CHART_TYPES.CANDLE}
                   />
-                )}
+                )} */}
               </>
             )}
           </>

@@ -22,6 +22,7 @@ import lARCHWallet from "components/organisms/wallet/lARCHWallet";
 import { Currency } from "types";
 import { useAppStore } from "store";
 import { Arch, arch } from "lib";
+import { ONE } from "components/util/chart";
 
 const AssetSymbol = styled.div`
   display: grid;
@@ -363,6 +364,9 @@ const WalletPanel = () => {
   const balances: { [key: string]: BigNumber } = {
     zcvv00xxxpppp: new BigNumber(123),
   };
+
+  //TODO: update when mainnet is ready
+  const dollarRate = ONE;
   return (
     <BoxPanel bg="bg2" minHeight={195} height={"100%"}>
       <Typography variant="h2" mb={5}>
@@ -419,7 +423,7 @@ const WalletPanel = () => {
                           ? "-"
                           : `$ ${Arch.utils
                               .toFormat(archBalance?.amount || ZERO)
-                              .times(new BigNumber(statusInfo?.ratio || ZERO))
+                              .times(dollarRate)
                               .dp(5)
                               .toFormat()}`}
                       </StyledDataText>
@@ -459,7 +463,7 @@ const WalletPanel = () => {
                           ? "-"
                           : `$ ${Arch.utils
                               .toFormat(larchBalance?.amount || ZERO)
-                              .times(new BigNumber(statusInfo?.ratio || ZERO))
+                              .times(dollarRate)
                               .dp(5)
                               .toFormat()}`}
                       </StyledDataText>
