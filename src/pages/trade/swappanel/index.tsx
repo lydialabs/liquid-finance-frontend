@@ -417,11 +417,11 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>
-          <Flex alignItems="center" justifyContent="space-between">
+          {/* <Flex alignItems="center" justifyContent="space-between">
             <Typography>Price impact</Typography>
 
             <Typography>{priceImpact}</Typography>
-          </Flex>
+          </Flex> */}
 
           <Flex justifyContent="center" mt={4}>
             {!inputError ? (
