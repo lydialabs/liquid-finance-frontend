@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import axios from "axios";
 import { Button, TextButton } from "components/atom/button";
 import Spinner from "components/atom/spiner";
 import { BoxPanel } from "components/molecules/panel";
@@ -8,6 +9,7 @@ import ModalContent from "components/organisms/modalcontent";
 import { Typography } from "components/theme";
 import { ZERO } from "consts/currency";
 import React from "react";
+import { useAppStore } from "store";
 
 import { Flex, Box } from "rebass/styled-components";
 import { showMessageOnBeforeUnload } from "utils/common";
@@ -329,17 +331,53 @@ const NetworkFeeSection = () => {
 };
 
 const RewardsPanel = () => {
+  const API_ENDPOINT = "https://torii-liquid-staking.techiast.com";
+  const [Reward, setReward] = React.useState("");
+  const [APY, setAPY] = React.useState("");
+  const [{ userAddress: account }] = useAppStore();
+
+  React.useEffect(() => {
+    (async () => {
+      if (account) {
+        const { data: reward } = await axios.get(
+          `${API_ENDPOINT}/swap/query-reward?address=${account}`
+        );
+        if (reward) {
+          setReward(reward);
+          console.log("Reward", reward);
+        }
+      }
+      const { data: APY } = await axios.get(
+        `${API_ENDPOINT}/swap/query-reward-ratio`
+      );
+      if (APY) {
+        setAPY(APY);
+        console.log("APY", APY);
+      }
+    })();
+  });
+
   return (
     <div>
       <BoxPanel bg="bg2">
         <Flex alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h2">Rewards</Typography>
+          <Typography variant="h2">Rewards (24hr)</Typography>
         </Flex>
 
-        <Flex>
-          {/* <RewardSection />
-          <NetworkFeeSection /> */}
-          Comming soon.
+        <Flex my={5}>
+          <Box width={1 / 2} className="border-right">
+            <Typography textAlign="center">ARCH</Typography>
+            <Typography variant="p" textAlign="center">
+              {Reward === "" ? "-" : (parseFloat(Reward) / 100000).toFixed(5)}
+            </Typography>
+          </Box>
+
+          <Box width={1 / 2}>
+            <Typography textAlign="center">APY</Typography>
+            <Typography variant="p" textAlign="center">
+              {APY === "" ? "-" : parseFloat(APY).toFixed(2)}%
+            </Typography>
+          </Box>
         </Flex>
       </BoxPanel>
     </div>
