@@ -50,8 +50,10 @@ interface SwapPanelProps {
   currencyList?: (Currency | undefined)[];
 }
 export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
-  const [{ userAddress: account, statusInfo, ...appStore }, updateAppStore] =
-    useAppStore();
+  const [
+    { userAddress: account, statusStakingInfo, ...appStore },
+    updateAppStore,
+  ] = useAppStore();
 
   const [{ pairSelected }, updateSwapStore] = useSwapStore();
 
@@ -63,13 +65,11 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
   const [swapInputValue, setSwapInputValue] = useState<string>("");
   const [forInputValue, setForInputValue] = useState<string>("");
   const [fieldInput, setFieldInput] = useState<string>("");
-  const ratioARCH = new BigNumber(statusInfo?.ratio || "1");
+  const ratioARCH = new BigNumber(statusStakingInfo?.ratio || "1");
   const ratio =
     swapValue?.symbol === "ARCH" && forValue?.symbol === "lARCH"
       ? ONE.div(ratioARCH)
       : ratioARCH;
-
-  console.log("statusInfo?.ratio", statusInfo?.ratio);
 
   useEffect(() => {
     if (init && currencyList?.length) {
@@ -93,7 +93,7 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
   const handleTypeInput = React.useCallback(
     (value: string) => {
       const forValue = value
-        ? new BigNumber(value).times(FEE).dp(5).toFormat()
+        ? new BigNumber(value).times(ratio).times(FEE).dp(5).toFormat()
         : "";
       console.log("forValue", forValue);
       setSwapInputValue(value);
@@ -161,15 +161,22 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
   );
 
   const onSwitchTokens = () => {
-    setSwapValue(forValue);
-    setForValue(swapValue);
+    const newSwapValue = forValue;
+    const newForValue = swapValue;
+    setSwapValue(newSwapValue);
+    setForValue(newForValue);
     const parseValue = new BigNumber(
       fieldInput === "SWAP" ? swapInputValue : forInputValue
     );
+    const ratioValue =
+      newSwapValue?.symbol === "ARCH" && newForValue?.symbol === "lARCH"
+        ? ONE.div(ratioARCH)
+        : ratioARCH;
+    ratioValue;
+    const fee = newSwapValue?.symbol === "ARCH" ? ONE : new BigNumber(99 / 100);
+
     const value = !parseValue.isNaN()
-      ? fieldInput === "SWAP"
-        ? parseValue.div(FEE).dp(5).toFormat()
-        : parseValue.times(FEE).dp(5).toFormat()
+      ? parseValue.times(ratioValue).times(fee).dp(5).toFormat()
       : "";
 
     setSwapInputValue(fieldInput === "SWAP" ? value : forInputValue);
