@@ -368,7 +368,7 @@ const RewardsPanel = () => {
           <Box width={1 / 2} className="border-right">
             <Typography textAlign="center">ARCH</Typography>
             <Typography variant="p" textAlign="center">
-              {Reward === "" ? "-" : (parseFloat(Reward) / 100000).toFixed(5)}
+              {Reward === "" ? "-" : (parseFloat(Reward) / 1000000).toFixed(5)}
             </Typography>
           </Box>
 
