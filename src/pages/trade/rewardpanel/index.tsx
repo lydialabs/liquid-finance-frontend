@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import axios from "axios";
 import { Button, TextButton } from "components/atom/button";
 import Spinner from "components/atom/spiner";
 import { BoxPanel } from "components/molecules/panel";
@@ -8,14 +9,13 @@ import ModalContent from "components/organisms/modalcontent";
 import { Typography } from "components/theme";
 import { ZERO } from "consts/currency";
 import React from "react";
-import axios from "axios";
 import { useAppStore } from "store";
+
 import { Flex, Box } from "rebass/styled-components";
 import { showMessageOnBeforeUnload } from "utils/common";
 
 const RewardSection = () => {
   const account = "abx";
-
   // const addTransaction = useTransactionAdder();
   // const shouldLedgerSign = useShouldLedgerSign();
 
@@ -339,36 +339,29 @@ const RewardsPanel = () => {
   React.useEffect(() => {
     (async () => {
       if (account) {
-        const { data: result } = await axios.get(
+        const { data: reward } = await axios.get(
           `${API_ENDPOINT}/swap/query-reward?address=${account}`
         );
-        if (result) {
-          setReward(result);
-          console.log("Reward", result);
+        if (reward) {
+          setReward(reward);
+          console.log("Reward", reward);
         }
-      } else {
-        setReward("");
       }
-    })();
-  }, []);
-
-  React.useEffect(() => {
-    (async () => {
-      const { data: result } = await axios.get(
+      const { data: APY } = await axios.get(
         `${API_ENDPOINT}/swap/query-reward-ratio`
       );
-      if (result) {
-        setAPY(result);
-        console.log("APY", result);
+      if (APY) {
+        setAPY(APY);
+        console.log("APY", APY);
       }
     })();
-  }, []);
+  });
 
   return (
     <div>
       <BoxPanel bg="bg2">
         <Flex alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h2">Rewards (24hr)</Typography>
+          <Typography variant="h2">Rewards</Typography>
         </Flex>
 
         <Flex my={5}>
@@ -382,7 +375,7 @@ const RewardsPanel = () => {
           <Box width={1 / 2}>
             <Typography textAlign="center">APY</Typography>
             <Typography variant="p" textAlign="center">
-              {parseFloat(APY).toFixed(2)}%
+              {APY === "" ? "-" : parseFloat(APY).toFixed(2)}%
             </Typography>
           </Box>
         </Flex>
