@@ -104,11 +104,17 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
   );
   const handleTypeOutput = React.useCallback(
     (value: string) => {
-      const swapValue = value
-        ? new BigNumber(value).times(ratio).times(FEE).dp(5).toFormat()
+      const newValue = new BigNumber(value).plus(
+        new BigNumber(value).times(1 / 100)
+      );
+      const swapInputValue = value
+        ? new BigNumber(swapValue?.symbol === "ARCH" ? value : newValue)
+            .div(ratio)
+            .dp(5)
+            .toFormat()
         : "";
       setForInputValue(value);
-      setSwapInputValue(swapValue);
+      setSwapInputValue(swapInputValue);
       setFieldInput("FOR");
     },
     [swapValue?.symbol, forValue?.symbol]
@@ -176,7 +182,15 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
     const fee = newSwapValue?.symbol === "ARCH" ? ONE : new BigNumber(99 / 100);
 
     const value = !parseValue.isNaN()
-      ? parseValue.times(ratioValue).times(fee).dp(5).toFormat()
+      ? fieldInput === "SWAP"
+        ? (newSwapValue?.symbol === "lARCH"
+            ? parseValue.plus(parseValue.times(1 / 100))
+            : parseValue
+          )
+            .div(ratioValue)
+            .dp(5)
+            .toFormat()
+        : parseValue.times(ratioValue).times(fee).dp(5).toFormat()
       : "";
 
     setSwapInputValue(fieldInput === "SWAP" ? value : forInputValue);
