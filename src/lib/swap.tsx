@@ -18,10 +18,12 @@ export default class Swap extends Contract {
     return this.query(appStore, this.contractAddress, entrypoint);
   }
   add(appStore: any, account: string, amount: string) {
+    debugger;
     const entrypoint = {
       add: {},
     };
-    const funds = coins(Arch.utils.toLoop(amount).toFixed(), "uconst");
+    // const funds = coins(Arch.utils.toLoop(amount).toFixed(), "uconst");
+    const funds = coins(Arch.utils.toLoop(amount).toFixed(), "utorii");
     console.log("funds", funds);
     return this.excute(
       appStore,

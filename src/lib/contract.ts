@@ -1,6 +1,6 @@
 import { calculateFee, Coin } from "@cosmjs/stargate";
 
-const GAS_LIMIT = 30000000000;
+const GAS_LIMIT = 1505735;
 
 export class Contract {
   public contractAddress: string;
