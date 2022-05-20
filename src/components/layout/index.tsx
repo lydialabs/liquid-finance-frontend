@@ -54,10 +54,10 @@ const Layout: React.FC = ({ children }) => {
           crossOrigin=""
         />
       </Head>
-      <body>
+      <>
         <Notification show={showNotification} type={type} summary={message} />
         {children}
-      </body>
+      </>
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { GasPrice } from "@cosmjs/stargate";
+import { Coin, GasPrice } from "@cosmjs/stargate";
 import { LiquidSigningCosmWasmClient } from "lib/cosmwasm";
 import { Currency } from "types";
 import { createStore } from "./store";
@@ -37,6 +37,17 @@ export interface AppStoreInterface {
         height: string;
       }
     | undefined;
+  statusStakingInfo:
+    | {
+        issued: string;
+        native: Coin;
+        unstakings: string;
+        claims: string;
+        bonded: string;
+        balance: string;
+        ratio: string;
+      }
+    | undefined;
 }
 
 export const AppStore = createStore<AppStoreInterface>({
@@ -49,6 +60,7 @@ export const AppStore = createStore<AppStoreInterface>({
   },
   statusInfo: undefined,
   orderInfoOf: undefined,
+  statusStakingInfo: undefined,
 });
 
 export const useAppStore = AppStore.useStore;

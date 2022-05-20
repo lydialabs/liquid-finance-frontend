@@ -18,7 +18,13 @@ interface UnstakePanelProps {
 
 export default function UnstakePanel({ claimableARCH }: UnstakePanelProps) {
   const [
-    { userAddress: account, archBalance, queryHandler, ...appStore },
+    {
+      userAddress: account,
+      archBalance,
+      statusStakingInfo,
+      queryHandler,
+      ...appStore
+    },
     updateAppStore,
   ] = useAppStore();
 
@@ -70,16 +76,9 @@ export default function UnstakePanel({ claimableARCH }: UnstakePanelProps) {
   };
 
   const archBalanceValue = Arch.utils.toFormat(archBalance?.amount || 0);
-
-  const [unstakingAmount, setUnstakingAmount] = React.useState<BigNumber>(ZERO);
-
-  React.useEffect(() => {
-    (async () => {
-      const result = await arch.Staking.statusStakingInfo({ queryHandler });
-      console.log("unstakingAmount", result);
-      setUnstakingAmount(Arch.utils.toFormat(result.unstakings));
-    })();
-  }, [account]);
+  const unstakingAmount = statusStakingInfo
+    ? Arch.utils.toFormat(statusStakingInfo.unstakings)
+    : ZERO;
 
   return (
     <>

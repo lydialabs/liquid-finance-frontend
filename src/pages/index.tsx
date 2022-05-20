@@ -12,13 +12,13 @@ import RewardsPanel from "./trade/rewardpanel";
 import WalletPanel from "./trade/walletpanel";
 import { useAppStore } from "store";
 import { useMedia } from "react-use";
+import { SwapStore } from "store/swap.store";
 
 const Trade = () => {
   const [
     { larchBalance, archBalance, userAddress: account, orderInfoOf },
     updateAppStore,
   ] = useAppStore();
-  console.log("statusInfo?.balance", orderInfoOf?.native);
 
   const [value, setValue] = React.useState<number>(0);
 
@@ -32,44 +32,46 @@ const Trade = () => {
   const isSmallScreen = useMedia(`(max-width: 768px)`);
 
   return (
-    <DefaultLayout title="Liquid Finance">
-      <Box flex={1}>
-        <Flex mb={10} flexDirection="column">
-          <Flex alignItems="center" justifyContent="space-between">
-            <Tabs value={value} onChange={handleTabClick}>
-              <Tab>Swap</Tab>
-              <Tab>Supply liquidity</Tab>
-            </Tabs>
+    <SwapStore.Provider>
+      <DefaultLayout title="Liquid Finance">
+        <Box flex={1}>
+          <Flex mb={10} flexDirection="column">
+            <Flex alignItems="center" justifyContent="space-between">
+              <Tabs value={value} onChange={handleTabClick}>
+                <Tab>Swap</Tab>
+                <Tab>Supply liquidity</Tab>
+              </Tabs>
+            </Flex>
+
+            <TabPanel value={value} index={0}>
+              <SectionPanel bg="bg2">
+                <SwapPanel currencyList={currencyList} />
+                <SwapDescription />
+              </SectionPanel>
+            </TabPanel>
+
+            <TabPanel value={value} index={1}>
+              <LPPanel currencyList={currencyList} />
+            </TabPanel>
           </Flex>
 
-          <TabPanel value={value} index={0}>
-            <SectionPanel bg="bg2">
-              <SwapPanel currencyList={currencyList} />
-              <SwapDescription />
-            </SectionPanel>
-          </TabPanel>
-
-          <TabPanel value={value} index={1}>
-            <LPPanel currencyList={currencyList} />
-          </TabPanel>
+          {value === 1 && account && orderInfoOf?.native !== "0" && (
+            <LiquidityDetails />
+          )}
+        </Box>
+        <Flex
+          marginBottom={40}
+          flexWrap={isSmallScreen ? "wrap-reverse" : "nowrap"}
+        >
+          <Box flex={"1 1 360px"} marginRight={!isSmallScreen ? 20 : 0}>
+            <RewardsPanel />
+          </Box>
+          <Box flex={"1 1 55%"} marginBottom={isSmallScreen ? 20 : 0}>
+            <WalletPanel />
+          </Box>
         </Flex>
-
-        {value === 1 && account && orderInfoOf?.native !== "0" && (
-          <LiquidityDetails />
-        )}
-      </Box>
-      <Flex
-        marginBottom={40}
-        flexWrap={isSmallScreen ? "wrap-reverse" : "nowrap"}
-      >
-        <Box flex={"1 1 360px"} marginRight={!isSmallScreen ? 20 : 0}>
-          <RewardsPanel />
-        </Box>
-        <Box flex={"1 1 55%"} marginBottom={isSmallScreen ? 20 : 0}>
-          <WalletPanel />
-        </Box>
-      </Flex>
-    </DefaultLayout>
+      </DefaultLayout>
+    </SwapStore.Provider>
   );
 };
 export default Trade;

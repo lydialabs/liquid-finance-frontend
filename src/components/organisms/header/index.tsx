@@ -172,6 +172,9 @@ export default function Header(props: { title?: string; className?: string }) {
           { queryHandler },
           account
         );
+        const statusStakingInfoResult = await arch.Staking.statusStakingInfo({
+          queryHandler,
+        });
 
         updateAppStore((draft: AppStoreInterface) => {
           draft.archBalance = {
@@ -184,6 +187,7 @@ export default function Header(props: { title?: string; className?: string }) {
           };
           draft.statusInfo = statusInforResult;
           draft.orderInfoOf = orderInfoOfResult;
+          draft.statusStakingInfo = statusStakingInfoResult;
           draft.refreshBalances = false;
         });
       })();

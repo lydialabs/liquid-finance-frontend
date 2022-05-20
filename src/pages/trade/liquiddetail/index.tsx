@@ -22,6 +22,7 @@ import { Currency } from "types";
 import { ZERO } from "consts/currency";
 import { AppStoreInterface, useAppStore } from "store";
 import { arch, Arch } from "lib";
+import { ONE } from "components/util/chart";
 
 const TableWrapper = styled.div``;
 
@@ -108,7 +109,7 @@ const WithdrawModalQ = ({
 }) => {
   // const account = "abc";
   const [
-    { userAddress: account, orderInfoOf, statusInfo, ...appStore },
+    { userAddress: account, orderInfoOf, statusStakingInfo, ...appStore },
     updateAppStore,
   ] = useAppStore();
 
@@ -141,8 +142,11 @@ const WithdrawModalQ = ({
   const quotient2 = new BigNumber(1);
 
   const yourSupplyARCH = Arch.utils.toFormat(orderInfoOf?.native || 0).dp(5);
-  const lARCH = statusInfo
-    ? yourSupplyARCH.times(new BigNumber(statusInfo.ratio)).dp(5).toFormat()
+  const lARCH = statusStakingInfo
+    ? yourSupplyARCH
+        .times(ONE.div(new BigNumber(statusStakingInfo.ratio)))
+        .dp(5)
+        .toFormat()
     : "...";
 
   const currency1: Currency = {
