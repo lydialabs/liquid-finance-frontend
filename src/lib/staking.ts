@@ -22,7 +22,8 @@ export default class Staking extends Contract {
     const entrypoint = {
       stake: {},
     };
-    const funds = coins(Arch.utils.toLoop(amount).toFixed(), "uconst");
+    // const funds = coins(Arch.utils.toLoop(amount).toFixed(), "uconst");
+    const funds = coins(Arch.utils.toLoop(amount).toFixed(), "utorii");
     return this.excute(
       appStore,
       account,
