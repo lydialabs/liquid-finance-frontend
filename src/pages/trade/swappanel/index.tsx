@@ -393,7 +393,7 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
         <AutoColumn gap="md">
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">
-              {swapValue?.symbol === "ARCH" ? `Stake` : `Swap`}
+              {swapValue?.symbol === "ARCH" || !account ? `Stake` : `Swap`}
             </Typography>
             <Typography as="div" hidden={!account}>
               Wallet:{" "}
@@ -479,8 +479,10 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
                   ? "Enter amount"
                   : !!inputError
                   ? inputError
+                  : swapValue?.symbol === "ARCH"
+                  ? "Stake"
                   : "Swap"
-                : `Swap`}
+                : `Stake`}
             </Button>
           </Flex>
         </AutoColumn>
