@@ -15,10 +15,8 @@ import { useMedia } from "react-use";
 import { SwapStore } from "store/swap.store";
 
 const Trade = () => {
-  const [
-    { larchBalance, archBalance, userAddress: account, orderInfoOf },
-    updateAppStore,
-  ] = useAppStore();
+  const [{ archBalance, userAddress: account, orderInfoOf }, updateAppStore] =
+    useAppStore();
 
   const [value, setValue] = React.useState<number>(0);
 
@@ -26,8 +24,7 @@ const Trade = () => {
     setValue(value);
   };
 
-  const currencyList =
-    larchBalance && archBalance ? [archBalance, larchBalance] : undefined;
+  const currencyList = archBalance ? [archBalance] : undefined;
 
   const isSmallScreen = useMedia(`(max-width: 768px)`);
 
