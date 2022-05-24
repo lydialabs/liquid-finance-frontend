@@ -7,7 +7,7 @@ import styled from "styled-components";
 
 import WalletIcon from "assets/icons/wallet.svg";
 import Logo from "components/atom/logo";
-import { Button, IconButton } from "components/atom/button";
+import { Button, IconButton, ButtonLink } from "components/atom/button";
 import { Link } from "components/atom/link";
 import { Typography } from "components/theme";
 import { MouseoverTooltip } from "components/molecules/tooltip";
@@ -25,6 +25,8 @@ import { LiquidSigningCosmWasmClient } from "lib/cosmwasm";
 import { GasPrice } from "@cosmjs/stargate";
 import { Currency } from "types";
 import { arch } from "lib";
+import Modal from "../modal";
+import ModalContent from "../modalcontent";
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -85,6 +87,30 @@ export default function Header(props: { title?: string; className?: string }) {
     { userAddress: account, refreshBalances, queryHandler, CosmWasmClient },
     updateAppStore,
   ] = useAppStore();
+  const hasExtension = typeof window !== "undefined" && window["keplr"];
+
+  useEffect(() => {
+    (async () => {
+      if (hasExtension) {
+        const offlineSigner = await window.getOfflineSigner(ChainInfo.chainId);
+        const cwClient = await LiquidSigningCosmWasmClient.connectWithSigner(
+          {
+            url: ChainInfo.rpc,
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          },
+          offlineSigner
+        );
+        const queryHandler =
+          cwClient.getQueryHandler()?.wasm.queryContractSmart;
+        updateAppStore((draft: AppStoreInterface) => {
+          draft.CosmWasmClient = cwClient;
+          draft.queryHandler = queryHandler;
+        });
+      }
+    })();
+  }, [hasExtension]);
 
   async function connectWallet() {
     console.log("Connecting wallet...");
@@ -98,29 +124,29 @@ export default function Header(props: { title?: string; className?: string }) {
               ChainInfo.chainId
             );
             console.log("offlineSigner", offlineSigner);
-            const cwClient =
-              await LiquidSigningCosmWasmClient.connectWithSigner(
-                {
-                  url: ChainInfo.rpc,
-                  headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                  },
-                },
-                offlineSigner
-              );
+            // const cwClient =
+            //   await LiquidSigningCosmWasmClient.connectWithSigner(
+            //     {
+            //       url: ChainInfo.rpc,
+            //       headers: {
+            //         "Content-Type": "application/x-www-form-urlencoded",
+            //       },
+            //     },
+            //     offlineSigner
+            //   );
             const accounts = await offlineSigner.getAccounts();
             const gasPrice = GasPrice.fromString("0.002uconst");
             const userAddress = accounts[0].address;
 
-            const queryHandler =
-              cwClient.getQueryHandler()?.wasm.queryContractSmart;
+            // const queryHandler =
+            //   cwClient.getQueryHandler()?.wasm.queryContractSmart;
 
             const walletInfo = {
               offlineSigner: offlineSigner,
-              CosmWasmClient: cwClient,
+              CosmWasmClient: undefined,
               accounts: accounts,
               gasPrice: gasPrice,
-              queryHandler: queryHandler,
+              queryHandler: undefined,
               userAddress: userAddress,
               refreshBalances: true,
             };
@@ -157,6 +183,24 @@ export default function Header(props: { title?: string; className?: string }) {
     connectWallet();
   }, []);
 
+  //init value before login
+  useEffect(() => {
+    (async () => {
+      if (!queryHandler) return;
+      const statusInforResult = await arch.Swap.statusInfo({ queryHandler });
+      const statusStakingInfoResult = await arch.Staking.statusStakingInfo({
+        queryHandler,
+      });
+
+      updateAppStore((draft: AppStoreInterface) => {
+        draft.statusInfo = statusInforResult;
+        draft.statusStakingInfo = statusStakingInfoResult;
+        draft.refreshBalances = false;
+      });
+    })();
+  }, [refreshBalances, queryHandler]);
+
+  //refresh data when updating transaction
   useEffect(() => {
     if (refreshBalances) {
       (async () => {
@@ -197,6 +241,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const disconnect = React.useCallback(() => {
     updateAppStore((draft: AppStoreInterface) => {
       draft.userAddress = null;
+      draft.refreshBalances = true;
     });
     removeAccountStorage();
   }, []);
@@ -231,7 +276,26 @@ export default function Header(props: { title?: string; className?: string }) {
             <Button onClick={() => setToggleWalletModal(true)}>Sign in</Button>
           </Flex>
         )}
-
+        {!account && !hasExtension && (
+          <Modal
+            isOpen={!hasExtension}
+            onDismiss={() => console.log("dismiss")}
+          >
+            <ModalContent>
+              <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                Please add the Keplr extension to continue. Thank you!
+              </Typography>
+              <Flex justifyContent="center" mt={4} className="border-top">
+                <ButtonLink
+                  href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap"
+                  target="_blank"
+                >
+                  Add Keplr
+                </ButtonLink>
+              </Flex>
+            </ModalContent>
+          </Modal>
+        )}
         <WalletModal
           isOpen={toggleWalletModal}
           onDismiss={() => {

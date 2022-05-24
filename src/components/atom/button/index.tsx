@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Button as RebassButton } from "rebass/styled-components";
 import styled from "styled-components";
 
@@ -31,10 +30,10 @@ export const Button = styled(RebassButton)`
   `}
 `;
 
-export const ButtonLink = styled(Link)`
+export const ButtonLink = styled.a`
   display: inline-block;
   border-radius: 10px;
-  padding: 7px 25px;
+  padding: 5px 15px;
   color: #ffffff;
   text-decoration: none;
   background-color: ${({ theme }) => theme.colors.primary};
@@ -42,12 +41,25 @@ export const ButtonLink = styled(Link)`
   transition: background-color 0.3s ease;
   user-select: none;
   line-height: 1.4;
-  font-size: 14px;
+  opacity: 1;
 
   &:hover {
-    background-color: rgba(187, 69, 29, 1);
-    transition: background-color 0.2s ease;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
   }
+  &:focus {
+    outline: none;
+  }
+
+  &:disabled {
+    background: #c8d4e1;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+  padding: 7px 25px;
+`}
 `;
 
 export const TextButton = styled(RebassButton)`

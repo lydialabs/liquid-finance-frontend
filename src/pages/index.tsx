@@ -27,7 +27,18 @@ const Trade = () => {
   };
 
   const currencyList =
-    larchBalance && archBalance ? [archBalance, larchBalance] : undefined;
+    larchBalance && archBalance
+      ? [archBalance, larchBalance]
+      : [
+          {
+            amount: 0,
+            symbol: "ARCH",
+          },
+          {
+            amount: 0,
+            symbol: "lARCH",
+          },
+        ];
 
   const isSmallScreen = useMedia(`(max-width: 768px)`);
 
