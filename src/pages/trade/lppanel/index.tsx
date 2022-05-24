@@ -65,10 +65,11 @@ const VerticalDivider = styled.div`
 const WalletSection: React.FC<{ currency: Currency | undefined }> = ({
   currency,
 }) => {
+  console.log("currency", currency);
   return (
     <Flex flexDirection="row" justifyContent="center" alignItems="center">
       <Typography>
-        Wallet: {`${currency?.amount || "0"} ${currency?.symbol}`}
+        Wallet: {`${currency?.amount || "0"} ${currency?.symbol || ""}`}
       </Typography>
     </Flex>
   );
@@ -223,21 +224,23 @@ export const LPPanel: React.FC<LPPanelProps> = ({ currencyList }) => {
             </AutoColumn>
           </AutoColumn>
 
-          <Flex mt={3} justifyContent="flex-end">
-            <WalletSection
-              currency={{
-                amount: Arch.utils
-                  .toFormat(
-                    currencyList?.find(
-                      currency => currency?.symbol === supplyValue?.symbol
-                    )?.amount || "0"
-                  )
-                  .dp(5)
-                  .toFormat(),
-                symbol: supplyValue?.symbol,
-              }}
-            />
-          </Flex>
+          {account && (
+            <Flex mt={3} justifyContent="flex-end">
+              <WalletSection
+                currency={{
+                  amount: Arch.utils
+                    .toFormat(
+                      currencyList?.find(
+                        currency => currency?.symbol === supplyValue?.symbol
+                      )?.amount || "0"
+                    )
+                    .dp(5)
+                    .toFormat(),
+                  symbol: supplyValue?.symbol,
+                }}
+              />
+            </Flex>
+          )}
 
           <Slider mt={5}>
             <Nouislider
