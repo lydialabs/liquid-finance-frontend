@@ -65,7 +65,6 @@ const VerticalDivider = styled.div`
 const WalletSection: React.FC<{ currency: Currency | undefined }> = ({
   currency,
 }) => {
-  console.log("currency", currency);
   return (
     <Flex flexDirection="row" justifyContent="center" alignItems="center">
       <Typography>
