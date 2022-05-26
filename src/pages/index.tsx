@@ -28,6 +28,7 @@ const Trade = () => {
 
   const currencyList =
     larchBalance && archBalance ? [archBalance, larchBalance] : undefined;
+  const supportLiquidityOption = archBalance ? [archBalance] : undefined;
 
   const isSmallScreen = useMedia(`(max-width: 768px)`);
 
@@ -51,7 +52,7 @@ const Trade = () => {
             </TabPanel>
 
             <TabPanel value={value} index={1}>
-              <LPPanel currencyList={currencyList} />
+              <LPPanel currencyList={supportLiquidityOption} />
             </TabPanel>
           </Flex>
 
