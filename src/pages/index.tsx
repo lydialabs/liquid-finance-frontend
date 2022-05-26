@@ -39,6 +39,14 @@ const Trade = () => {
             symbol: "lARCH",
           },
         ];
+  const supportLiquidityOption = archBalance
+    ? [archBalance]
+    : [
+        {
+          amount: 0,
+          symbol: "ARCH",
+        },
+      ];
 
   const isSmallScreen = useMedia(`(max-width: 768px)`);
 
@@ -62,7 +70,7 @@ const Trade = () => {
             </TabPanel>
 
             <TabPanel value={value} index={1}>
-              <LPPanel currencyList={currencyList} />
+              <LPPanel currencyList={supportLiquidityOption} />
             </TabPanel>
           </Flex>
 
