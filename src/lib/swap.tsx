@@ -1,4 +1,5 @@
 import { coins } from "@cosmjs/stargate";
+import { ChainInfo } from "consts/chain";
 import { Arch } from "lib";
 import { Contract } from "./contract";
 
@@ -22,8 +23,10 @@ export default class Swap extends Contract {
     const entrypoint = {
       add: {},
     };
-    // const funds = coins(Arch.utils.toLoop(amount).toFixed(), "uconst");
-    const funds = coins(Arch.utils.toLoop(amount).toFixed(), "utorii");
+    const funds = coins(
+      Arch.utils.toLoop(amount).toFixed(),
+      ChainInfo.currencies[0].coinMinimalDenom
+    );
     console.log("funds", funds);
     return this.excute(
       appStore,
