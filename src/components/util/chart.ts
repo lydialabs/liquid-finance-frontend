@@ -3,6 +3,7 @@ import { LOOP } from "lib";
 import { Currency } from "types";
 import axios from "axios";
 import dayjs from "dayjs";
+import { API_ENDPOINT } from "consts";
 
 const LAUNCH_DAY = 1652767200000;
 const ONE_DAY_DURATION = 86400000;
@@ -16,8 +17,6 @@ const toLoop = (value: BigNumber | number | string): BigNumber => {
 const toARCH = (value: BigNumber | number | string): BigNumber => {
   return new BigNumber(value).div(LOOP);
 };
-
-const API_ENDPOINT = "https://torii-liquid-staking.techiast.com";
 
 export enum Field {
   INPUT = "INPUT",

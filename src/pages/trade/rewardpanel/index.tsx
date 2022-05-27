@@ -8,11 +8,13 @@ import Modal from "components/organisms/modal";
 import ModalContent from "components/organisms/modalcontent";
 import { Typography } from "components/theme";
 import { ZERO } from "consts/currency";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { useAppStore } from "store";
 
 import { Flex, Box } from "rebass/styled-components";
 import { showMessageOnBeforeUnload } from "utils/common";
+import { API_ENDPOINT } from "consts";
+import { Arch } from "lib";
 
 const RewardSection = () => {
   const account = "abx";
@@ -331,10 +333,9 @@ const NetworkFeeSection = () => {
 };
 
 const RewardsPanel = () => {
-  const API_ENDPOINT = "https://torii-liquid-staking.techiast.com";
-  const [Reward, setReward] = React.useState("");
-  const [APY, setAPY] = React.useState("");
-  const [{ userAddress: account }] = useAppStore();
+  const [reward, setReward] = useState("");
+  const [{ userAddress: account, statusInfo }] = useAppStore();
+  const [increasedRatio, setIncreasedRatio] = useState(ZERO);
 
   React.useEffect(() => {
     (async () => {
@@ -342,20 +343,36 @@ const RewardsPanel = () => {
         const { data: reward } = await axios.get(
           `${API_ENDPOINT}/swap/query-reward?address=${account}`
         );
-        if (reward) {
+
+        if (reward.toString()) {
           setReward(reward);
-          console.log("Reward", reward);
         }
       }
-      const { data: APY } = await axios.get(
+      const { data: result } = await axios.get(
         `${API_ENDPOINT}/swap/query-reward-ratio`
       );
-      if (APY) {
-        setAPY(APY);
-        console.log("APY", APY);
+      if (result) {
+        setIncreasedRatio(new BigNumber(result));
       }
     })();
-  });
+  }, [account]);
+
+  const APY: BigNumber = useMemo(() => {
+    const ratioAfter1Year = new BigNumber(statusInfo?.ratio || 0)
+      .plus(increasedRatio)
+      .times(365);
+    const supplyAfter1Year = ratioAfter1Year.times(
+      Arch.utils.toFormat(statusInfo?.issued || 1)
+    );
+    const supplyNow = Arch.utils.toFormat(statusInfo?.balance || 1);
+
+    return supplyAfter1Year.minus(supplyNow).div(supplyNow);
+  }, [
+    statusInfo?.ratio,
+    statusInfo?.issued,
+    statusInfo?.balance,
+    increasedRatio.toFixed(),
+  ]);
 
   return (
     <div>
@@ -368,14 +385,16 @@ const RewardsPanel = () => {
           <Box width={1 / 2} className="border-right">
             <Typography textAlign="center">ARCH</Typography>
             <Typography variant="p" textAlign="center">
-              {Reward === "" ? "-" : (parseFloat(Reward) / 1000000).toFixed(5)}
+              {reward === ""
+                ? "-"
+                : Arch.utils.toFormat(reward).dp(5).toFixed()}
             </Typography>
           </Box>
 
           <Box width={1 / 2}>
             <Typography textAlign="center">APY</Typography>
             <Typography variant="p" textAlign="center">
-              {APY === "" ? "-" : parseFloat(APY).toFixed(2)}%
+              {APY ? APY.toFixed(2) : "-"}%
             </Typography>
           </Box>
         </Flex>
