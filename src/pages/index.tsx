@@ -39,7 +39,7 @@ const Trade = () => {
           <Flex mb={10} flexDirection="column">
             <Flex alignItems="center" justifyContent="space-between">
               <Tabs value={value} onChange={handleTabClick}>
-                <Tab>Swap</Tab>
+                <Tab>Home</Tab>
                 <Tab>Supply liquidity</Tab>
               </Tabs>
             </Flex>
