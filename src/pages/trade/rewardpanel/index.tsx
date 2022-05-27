@@ -14,6 +14,7 @@ import { useAppStore } from "store";
 import { Flex, Box } from "rebass/styled-components";
 import { showMessageOnBeforeUnload } from "utils/common";
 import { API_ENDPOINT } from "consts";
+import { Arch } from "lib";
 
 const RewardSection = () => {
   const account = "abx";
@@ -361,9 +362,9 @@ const RewardsPanel = () => {
       .plus(increasedRatio)
       .times(365);
     const supplyAfter1Year = ratioAfter1Year.times(
-      new BigNumber(statusInfo?.issued || 1)
+      Arch.utils.toFormat(statusInfo?.issued || 1)
     );
-    const supplyNow = new BigNumber(statusInfo?.balance || 1);
+    const supplyNow = Arch.utils.toFormat(statusInfo?.balance || 1);
 
     return supplyAfter1Year.minus(supplyNow).div(supplyNow);
   }, [
@@ -384,7 +385,9 @@ const RewardsPanel = () => {
           <Box width={1 / 2} className="border-right">
             <Typography textAlign="center">ARCH</Typography>
             <Typography variant="p" textAlign="center">
-              {reward === "" ? "-" : (parseFloat(reward) / 1000000).toFixed(5)}
+              {reward === ""
+                ? "-"
+                : Arch.utils.toFormat(reward).dp(5).toFixed()}
             </Typography>
           </Box>
 
