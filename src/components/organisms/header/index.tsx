@@ -88,7 +88,7 @@ export default function Header(props: { title?: string; className?: string }) {
     updateAppStore,
   ] = useAppStore();
   const hasExtension = typeof window !== "undefined" && window["keplr"];
-
+  const [isOpenModalAddKeplr, setIsOpenModalAddKeplr] = useState(false);
   useEffect(() => {
     (async () => {
       if (hasExtension) {
@@ -257,6 +257,14 @@ export default function Header(props: { title?: string; className?: string }) {
     disconnect();
   };
 
+  const onClickLogin = () => {
+    if (!hasExtension) {
+      setIsOpenModalAddKeplr(true);
+    } else {
+      setToggleWalletModal(true);
+    }
+  };
+
   const copyAddress = React.useCallback(async (account: string) => {
     await navigator.clipboard.writeText(account);
     updateCopyState(true);
@@ -273,13 +281,13 @@ export default function Header(props: { title?: string; className?: string }) {
         </Flex>
         {!account && (
           <Flex alignItems="center">
-            <Button onClick={() => setToggleWalletModal(true)}>Sign in</Button>
+            <Button onClick={() => onClickLogin()}>Sign in</Button>
           </Flex>
         )}
-        {!account && !hasExtension && (
+        {!hasExtension && (
           <Modal
-            isOpen={!hasExtension}
-            onDismiss={() => console.log("dismiss")}
+            isOpen={isOpenModalAddKeplr}
+            onDismiss={() => setIsOpenModalAddKeplr(false)}
           >
             <ModalContent>
               <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
@@ -289,6 +297,7 @@ export default function Header(props: { title?: string; className?: string }) {
                 <ButtonLink
                   href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap"
                   target="_blank"
+                  onClick={() => setIsOpenModalAddKeplr(false)}
                 >
                   Add Keplr
                 </ButtonLink>
