@@ -41,10 +41,9 @@ export const generateChartData = async (pairSelected: {
     value:
       pairSelected.INPUT?.symbol === "ARCH" &&
       pairSelected.OUTPUT?.symbol === "lARCH"
-        ? ONE.div(Number(ratio)).toNumber()
-        : Number(ratio),
+        ? Number(ratio)
+        : ONE.div(Number(ratio)).toNumber(),
   }));
-  console.log("result", _data);
   return _data;
 };
 

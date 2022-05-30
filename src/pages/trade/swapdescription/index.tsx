@@ -126,11 +126,12 @@ export default function SwapDescription() {
   const ratio =
     pairSelected.INPUT?.symbol === "ARCH" &&
     pairSelected.OUTPUT?.symbol === "lARCH"
-      ? ONE.div(new BigNumber(statusStakingInfo?.ratio || "1"))
-      : new BigNumber(statusStakingInfo?.ratio || "1");
+      ? new BigNumber(statusStakingInfo?.ratio || "1")
+      : ONE.div(new BigNumber(statusStakingInfo?.ratio || "1"));
   const pairName = `${pairSelected.INPUT?.symbol || "..."} / ${
     pairSelected.OUTPUT?.symbol || "..."
   }`;
+
   const price = new BigNumber(1);
 
   // const queueData: any = React.useMemo(
@@ -147,8 +148,6 @@ export default function SwapDescription() {
     })();
   }, [pairSelected.INPUT?.symbol, pairSelected.OUTPUT?.symbol]);
 
-  console.log("queueData", queueData);
-
   return (
     <Box bg="bg2" flex={1} p={[5, 7]}>
       <Flex mb={5} flexWrap="wrap">
@@ -156,13 +155,7 @@ export default function SwapDescription() {
           <Typography variant="h3" mb={2}>
             {pairName}
           </Typography>
-
-          <Typography variant="p">
-            {`${ratio?.toFixed(4) || "..."}
-                    ${pairSelected.OUTPUT?.symbol || "..."} per ${
-              pairSelected.INPUT?.symbol || "..."
-            } `}
-          </Typography>
+          <Typography variant="p">{ratio?.toFixed(4) || "..."}</Typography>
         </Box>
       </Flex>
 
