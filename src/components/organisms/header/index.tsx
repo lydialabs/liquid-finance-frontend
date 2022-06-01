@@ -259,6 +259,7 @@ export default function Header(props: { title?: string; className?: string }) {
   };
 
   const onClickLogin = () => {
+    console.log("hasExtension", hasExtension);
     if (!hasExtension) {
       setIsOpenModalAddKeplr(true);
     } else {
