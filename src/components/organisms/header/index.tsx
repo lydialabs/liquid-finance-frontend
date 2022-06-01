@@ -90,6 +90,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const [hasExtension, setHasExtension] = useState(
     typeof window !== "undefined" && window["keplr"]
   );
+  console.log("window", typeof window);
   console.log("hasExtension", hasExtension);
   const [isOpenModalAddKeplr, setIsOpenModalAddKeplr] = useState(false);
   useEffect(() => {
