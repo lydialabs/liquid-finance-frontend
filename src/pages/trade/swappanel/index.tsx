@@ -260,8 +260,6 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
       }
     })();
   }, [appStore]);
-  console.log("currencyList", currencyList);
-  console.log("executionTrade", executionTrade);
 
   const handleSwapConfirm = async () => {
     if (!executionTrade || !account) return;
