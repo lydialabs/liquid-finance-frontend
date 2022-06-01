@@ -87,11 +87,8 @@ export default function Header(props: { title?: string; className?: string }) {
     { userAddress: account, refreshBalances, queryHandler, CosmWasmClient },
     updateAppStore,
   ] = useAppStore();
-  const [hasExtension, setHasExtension] = useState(
-    typeof window !== "undefined" && window["keplr"]
-  );
-  console.log("window", typeof window);
-  console.log("hasExtension", hasExtension);
+  const hasExtension = typeof window !== "undefined" && window["keplr"];
+  console.log("keplr", window["keplr"]);
   const [isOpenModalAddKeplr, setIsOpenModalAddKeplr] = useState(false);
   useEffect(() => {
     (async () => {
@@ -263,10 +260,11 @@ export default function Header(props: { title?: string; className?: string }) {
   };
 
   const onClickLogin = () => {
-    console.log("hasExtension", hasExtension);
     if (!hasExtension) {
+      console.log("Add keplr");
       setIsOpenModalAddKeplr(true);
     } else {
+      console.log("open modal");
       setToggleWalletModal(true);
     }
   };
