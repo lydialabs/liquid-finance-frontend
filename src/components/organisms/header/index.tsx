@@ -199,7 +199,7 @@ export default function Header(props: { title?: string; className?: string }) {
         draft.refreshBalances = false;
       });
     })();
-  }, [refreshBalances, queryHandler]);
+  }, [refreshBalances, queryHandler, hasExtension]);
 
   //refresh data when updating transaction
   useEffect(() => {
