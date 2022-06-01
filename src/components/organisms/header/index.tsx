@@ -88,7 +88,10 @@ export default function Header(props: { title?: string; className?: string }) {
     updateAppStore,
   ] = useAppStore();
   const hasExtension = typeof window !== "undefined" && window["keplr"];
-  console.log("keplr", window["keplr"]);
+  if (typeof window !== "undefined") {
+    console.log("keplr", window["keplr"]);
+  }
+
   const [isOpenModalAddKeplr, setIsOpenModalAddKeplr] = useState(false);
   useEffect(() => {
     (async () => {
