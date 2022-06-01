@@ -87,7 +87,10 @@ export default function Header(props: { title?: string; className?: string }) {
     { userAddress: account, refreshBalances, queryHandler, CosmWasmClient },
     updateAppStore,
   ] = useAppStore();
-  const hasExtension = typeof window !== "undefined" && window["keplr"];
+  const [hasExtension, setHasExtension] = useState(
+    typeof window !== "undefined" && window["keplr"]
+  );
+  console.log("hasExtension", hasExtension);
   const [isOpenModalAddKeplr, setIsOpenModalAddKeplr] = useState(false);
   useEffect(() => {
     (async () => {
