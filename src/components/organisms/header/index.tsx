@@ -87,9 +87,13 @@ export default function Header(props: { title?: string; className?: string }) {
     { userAddress: account, refreshBalances, queryHandler, CosmWasmClient },
     updateAppStore,
   ] = useAppStore();
-  const hasExtension = typeof window !== "undefined" && window["keplr"];
+  const [hasExtension, setHasExtension] = useState(false);
   if (typeof window !== "undefined") {
-    console.log("keplr", window["keplr"]);
+    setTimeout(() => {
+      if (window["keplr"]) {
+        setHasExtension(true);
+      }
+    }, 300);
   }
 
   const [isOpenModalAddKeplr, setIsOpenModalAddKeplr] = useState(false);
@@ -127,7 +131,6 @@ export default function Header(props: { title?: string; className?: string }) {
             const offlineSigner = await window.getOfflineSigner(
               ChainInfo.chainId
             );
-            console.log("offlineSigner", offlineSigner);
             // const cwClient =
             //   await LiquidSigningCosmWasmClient.connectWithSigner(
             //     {
