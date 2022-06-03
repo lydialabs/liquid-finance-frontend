@@ -124,6 +124,7 @@ export default function Header(props: { title?: string; className?: string }) {
     console.log("Connecting wallet...");
     try {
       if (window) {
+        console.log("window");
         setTimeout(async () => {
           if (window["keplr"]) {
             if (window.keplr["experimentalSuggestChain"]) {
@@ -177,7 +178,7 @@ export default function Header(props: { title?: string; className?: string }) {
               "_blank"
             );
           }
-        }, 200);
+        }, 300);
       } else {
         console.warn("Error parsing window object");
       }
