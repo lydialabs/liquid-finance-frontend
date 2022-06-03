@@ -302,7 +302,7 @@ const WalletPanel = () => {
           );
           console.log("claimableValue", claimableValue);
           setClaimableARCH(Arch.utils.toFormat(claimableValue?.balance || "0"));
-        }, 100);
+        }, 300);
       }
     })();
   }, [account, archBalance]);
