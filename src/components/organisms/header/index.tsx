@@ -93,7 +93,7 @@ export default function Header(props: { title?: string; className?: string }) {
       if (window["keplr"]) {
         setHasExtension(true);
       }
-    }, 300);
+    }, 200);
   }
 
   const [isOpenModalAddKeplr, setIsOpenModalAddKeplr] = useState(false);
@@ -193,7 +193,6 @@ export default function Header(props: { title?: string; className?: string }) {
   //init value before login
   useEffect(() => {
     (async () => {
-      console.log("queryHandler", queryHandler);
       if (!queryHandler) return;
       const statusInforResult = await arch.Swap.statusInfo({ queryHandler });
       const statusStakingInfoResult = await arch.Staking.statusStakingInfo({
