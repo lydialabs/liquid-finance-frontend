@@ -287,7 +287,9 @@ const WalletPanel = () => {
   useEffect(() => {
     (async () => {
       if (account) {
+        console.log("account", account);
         if (archBalance) {
+          console.log("archBalance", archBalance);
           const balances = Arch.utils.toFormat(archBalance.amount);
           setBalanceValue(new BigNumber(balances));
         }
