@@ -124,58 +124,60 @@ export default function Header(props: { title?: string; className?: string }) {
     console.log("Connecting wallet...");
     try {
       if (window) {
-        if (window["keplr"]) {
-          if (window.keplr["experimentalSuggestChain"]) {
-            await window.keplr.experimentalSuggestChain(ChainInfo);
-            await window.keplr.enable(ChainInfo.chainId);
-            const offlineSigner = await window.getOfflineSigner(
-              ChainInfo.chainId
-            );
-            // const cwClient =
-            //   await LiquidSigningCosmWasmClient.connectWithSigner(
-            //     {
-            //       url: ChainInfo.rpc,
-            //       headers: {
-            //         "Content-Type": "application/x-www-form-urlencoded",
-            //       },
-            //     },
-            //     offlineSigner
-            //   );
-            const accounts = await offlineSigner.getAccounts();
-            const gasPrice = GasPrice.fromString("0.002uconst");
-            const userAddress = accounts[0].address;
+        setTimeout(async () => {
+          if (window["keplr"]) {
+            if (window.keplr["experimentalSuggestChain"]) {
+              await window.keplr.experimentalSuggestChain(ChainInfo);
+              await window.keplr.enable(ChainInfo.chainId);
+              const offlineSigner = await window.getOfflineSigner(
+                ChainInfo.chainId
+              );
+              // const cwClient =
+              //   await LiquidSigningCosmWasmClient.connectWithSigner(
+              //     {
+              //       url: ChainInfo.rpc,
+              //       headers: {
+              //         "Content-Type": "application/x-www-form-urlencoded",
+              //       },
+              //     },
+              //     offlineSigner
+              //   );
+              const accounts = await offlineSigner.getAccounts();
+              const gasPrice = GasPrice.fromString("0.002uconst");
+              const userAddress = accounts[0].address;
 
-            // const queryHandler =
-            //   cwClient.getQueryHandler()?.wasm.queryContractSmart;
+              // const queryHandler =
+              //   cwClient.getQueryHandler()?.wasm.queryContractSmart;
 
-            const walletInfo = {
-              offlineSigner: offlineSigner,
-              CosmWasmClient: undefined,
-              accounts: accounts,
-              gasPrice: gasPrice,
-              queryHandler: undefined,
-              userAddress: userAddress,
-              refreshBalances: true,
-            };
+              const walletInfo = {
+                offlineSigner: offlineSigner,
+                CosmWasmClient: undefined,
+                accounts: accounts,
+                gasPrice: gasPrice,
+                queryHandler: undefined,
+                userAddress: userAddress,
+                refreshBalances: true,
+              };
 
-            console.log("walletInfo", walletInfo);
+              console.log("walletInfo", walletInfo);
 
-            updateAppStore((draft: AppStoreInterface) => ({
-              ...draft,
-              ...walletInfo,
-            }));
-            setAccountStorage(userAddress);
+              updateAppStore((draft: AppStoreInterface) => ({
+                ...draft,
+                ...walletInfo,
+              }));
+              setAccountStorage(userAddress);
+            } else {
+              console.warn(
+                "Error accessing experimental features, please update Keplr"
+              );
+            }
           } else {
-            console.warn(
-              "Error accessing experimental features, please update Keplr"
+            window.open(
+              "https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap",
+              "_blank"
             );
           }
-        } else {
-          window.open(
-            "https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap",
-            "_blank"
-          );
-        }
+        }, 200);
       } else {
         console.warn("Error parsing window object");
       }
