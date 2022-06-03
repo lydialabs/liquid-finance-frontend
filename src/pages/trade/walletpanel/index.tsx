@@ -287,22 +287,20 @@ const WalletPanel = () => {
   useEffect(() => {
     (async () => {
       if (account) {
-        setTimeout(async () => {
-          if (archBalance) {
-            const balances = Arch.utils.toFormat(archBalance.amount);
-            setBalanceValue(new BigNumber(balances));
-          }
-          if (larchBalance) {
-            const balances = Arch.utils.toFormat(larchBalance.amount);
-            setBalanceValuelARCH(new BigNumber(balances));
-          }
-          const claimableValue = await arch.Staking.claimableOf(
-            appStore,
-            account
-          );
-          console.log("claimableValue", claimableValue);
-          setClaimableARCH(Arch.utils.toFormat(claimableValue?.balance || "0"));
-        }, 300);
+        if (archBalance) {
+          const balances = Arch.utils.toFormat(archBalance.amount);
+          setBalanceValue(new BigNumber(balances));
+        }
+        if (larchBalance) {
+          const balances = Arch.utils.toFormat(larchBalance.amount);
+          setBalanceValuelARCH(new BigNumber(balances));
+        }
+        const claimableValue = await arch.Staking.claimableOf(
+          appStore,
+          account
+        );
+        console.log("claimableValue", claimableValue);
+        setClaimableARCH(Arch.utils.toFormat(claimableValue?.balance || "0"));
       }
     })();
   }, [account, archBalance]);
