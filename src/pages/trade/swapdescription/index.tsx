@@ -126,8 +126,8 @@ export default function SwapDescription() {
   const ratio =
     pairSelected.INPUT?.symbol === "ARCH" &&
     pairSelected.OUTPUT?.symbol === "lARCH"
-      ? new BigNumber(statusStakingInfo?.ratio || "1")
-      : ONE.div(new BigNumber(statusStakingInfo?.ratio || "1"));
+      ? ONE.div(new BigNumber(statusStakingInfo?.ratio || "1"))
+      : new BigNumber(statusStakingInfo?.ratio || "1");
   const pairName = `${pairSelected.INPUT?.symbol || "..."} / ${
     pairSelected.OUTPUT?.symbol || "..."
   }`;
@@ -155,7 +155,9 @@ export default function SwapDescription() {
           <Typography variant="h3" mb={2}>
             {pairName}
           </Typography>
-          <Typography variant="p">{ratio?.toFixed(4) || "..."}</Typography>
+          <Typography variant="p">{`1 ${pairSelected.INPUT?.symbol} = ${
+            ratio?.toFixed(4) || "..."
+          } ${pairSelected.OUTPUT?.symbol} `}</Typography>
         </Box>
       </Flex>
 
