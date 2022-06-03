@@ -126,6 +126,7 @@ export default function Header(props: { title?: string; className?: string }) {
       if (window) {
         console.log("window");
         setTimeout(async () => {
+          console.log('window["keplr"]', window["keplr"]);
           if (window["keplr"]) {
             if (window.keplr["experimentalSuggestChain"]) {
               await window.keplr.experimentalSuggestChain(ChainInfo);
@@ -178,7 +179,7 @@ export default function Header(props: { title?: string; className?: string }) {
               "_blank"
             );
           }
-        }, 300);
+        }, 500);
       } else {
         console.warn("Error parsing window object");
       }
