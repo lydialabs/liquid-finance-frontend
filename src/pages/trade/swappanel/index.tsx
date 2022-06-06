@@ -59,8 +59,14 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
 
   const [init, setInit] = useState<boolean>(true);
 
-  const [swapValue, setSwapValue] = useState<Currency | undefined>(undefined);
-  const [forValue, setForValue] = useState<Currency | undefined>();
+  const [swapValue, setSwapValue] = useState<Currency | undefined>({
+    amount: 0,
+    symbol: "ARCH",
+  });
+  const [forValue, setForValue] = useState<Currency | undefined>({
+    amount: 0,
+    symbol: "lARCH",
+  });
 
   const [swapInputValue, setSwapInputValue] = useState<string>("");
   const [forInputValue, setForInputValue] = useState<string>("");
@@ -250,12 +256,9 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
         setNativeTokenAmountOfSwapContract(
           Arch.utils.toFormat(result.balance).toFixed()
         );
-        console.log("nativeTokenAmountOfSwapContract", result.balance);
       }
     })();
   }, [appStore]);
-  console.log("currencyList", currencyList);
-  console.log("executionTrade", executionTrade);
 
   const handleSwapConfirm = async () => {
     if (!executionTrade || !account) return;

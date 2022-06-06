@@ -44,7 +44,6 @@ export const generateChartData = async (pairSelected: {
         ? ONE.div(Number(ratio)).toNumber()
         : Number(ratio),
   }));
-  console.log("result", _data);
   return _data;
 };
 
