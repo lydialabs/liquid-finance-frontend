@@ -125,7 +125,6 @@ export default function Header(props: { title?: string; className?: string }) {
     try {
       if (window) {
         setTimeout(async () => {
-          console.log('window["keplr"]', window["keplr"]);
           if (window["keplr"]) {
             if (window.keplr["experimentalSuggestChain"]) {
               await window.keplr.experimentalSuggestChain(ChainInfo);
@@ -152,16 +151,13 @@ export default function Header(props: { title?: string; className?: string }) {
 
               const walletInfo = {
                 offlineSigner: offlineSigner,
-                CosmWasmClient: undefined,
+                CosmWasmClient: CosmWasmClient,
                 accounts: accounts,
                 gasPrice: gasPrice,
-                queryHandler: undefined,
+                queryHandler: queryHandler,
                 userAddress: userAddress,
                 refreshBalances: true,
               };
-
-              console.log("walletInfo", walletInfo);
-
               updateAppStore((draft: AppStoreInterface) => ({
                 ...draft,
                 ...walletInfo,
@@ -221,7 +217,9 @@ export default function Header(props: { title?: string; className?: string }) {
           account,
           ChainInfo.stakeCurrency.coinMinimalDenom
         );
-        const statusInforResult = await arch.Swap.statusInfo({ queryHandler });
+        const statusInforResult = await arch.Swap.statusInfo({
+          queryHandler,
+        });
         const orderInfoOfResult = await arch.Swap.orderInfoOf(
           { queryHandler },
           account
@@ -269,10 +267,8 @@ export default function Header(props: { title?: string; className?: string }) {
 
   const onClickLogin = () => {
     if (!hasExtension) {
-      console.log("Add keplr");
       setIsOpenModalAddKeplr(true);
     } else {
-      console.log("open modal");
       setToggleWalletModal(true);
     }
   };

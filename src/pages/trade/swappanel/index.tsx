@@ -256,7 +256,6 @@ export const SwapPanel: FC<SwapPanelProps> = ({ currencyList }) => {
         setNativeTokenAmountOfSwapContract(
           Arch.utils.toFormat(result.balance).toFixed()
         );
-        console.log("nativeTokenAmountOfSwapContract", result.balance);
       }
     })();
   }, [appStore]);

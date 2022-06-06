@@ -299,7 +299,6 @@ const WalletPanel = () => {
           appStore,
           account
         );
-        console.log("claimableValue", claimableValue);
         setClaimableARCH(Arch.utils.toFormat(claimableValue?.balance || "0"));
       }
     })();
