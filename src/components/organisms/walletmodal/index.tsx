@@ -80,12 +80,14 @@ interface WalletModalProps {
   isOpen: boolean;
   onDismiss: () => void;
   onConnectWallet?: (e?: React.MouseEvent<HTMLElement>) => void;
+  onConnectLedger?: (e?: React.MouseEvent<HTMLElement>) => void;
 }
 
 export const WalletModal: React.FC<WalletModalProps> = ({
   isOpen,
   onDismiss,
   onConnectWallet,
+  onConnectLedger,
 }) => {
   return (
     <StyledModal isOpen={isOpen} onDismiss={onDismiss} mobile={isMobile}>
@@ -98,7 +100,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({
 
           <VerticalDivider text="or"></VerticalDivider>
 
-          <WalletOption disabled>
+          <WalletOption onClick={onConnectLedger}>
             <LedgerIcon width="50" height="50" />
             <Text>Ledger</Text>
           </WalletOption>
