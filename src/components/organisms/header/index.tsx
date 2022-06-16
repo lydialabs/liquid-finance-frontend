@@ -13,6 +13,7 @@ import { Typography } from "components/theme";
 import { MouseoverTooltip } from "components/molecules/tooltip";
 import { DropdownPopper } from "components/molecules/popover";
 import { shortenAddress } from "utils/common";
+import Ledger, { getBech32FromPK } from "utils/ledger";
 import WalletModal from "../walletmodal";
 import { ChainInfo } from "consts/chain";
 import { AppStoreInterface, useAppStore } from "store";
@@ -23,7 +24,6 @@ import {
 } from "helpers/storage";
 import { LiquidSigningCosmWasmClient } from "lib/cosmwasm";
 import { GasPrice } from "@cosmjs/stargate";
-import { Currency } from "types";
 import { arch } from "lib";
 
 const StyledLogo = styled(Logo)`
@@ -85,6 +85,37 @@ export default function Header(props: { title?: string; className?: string }) {
     { userAddress: account, refreshBalances, queryHandler, CosmWasmClient },
     updateAppStore,
   ] = useAppStore();
+
+  async function connectLedger() {
+    console.log("connect ledger ..");
+    try {
+      const ledger = await Ledger();
+      if (await ledger.isLocked()) {
+        throw new Error(`ledger's status is screen saver`);
+      }
+      const hdPathArray = "44/118/0/0/0".split("/").map(item => Number(item));
+
+      const publicKey = await ledger.getPublicKey(hdPathArray);
+      const address = getBech32FromPK("cosmos", Buffer.from(publicKey.buffer));
+      const walletInfo = {
+        gasPrice: "200000",
+        userAddress: address,
+        refreshBalances: true,
+      };
+
+      updateAppStore((draft: AppStoreInterface) => ({
+        ...draft,
+        ...walletInfo,
+      }));
+      setAccountStorage(address);
+    } catch (err) {
+      console.log(err);
+    }
+
+    // const transport = await TransportWebHID.create();
+    // transport.setDebugMode && transport.setDebugMode(false);
+    // console.log("transport", transport);
+  }
 
   async function connectWallet() {
     console.log("Connecting wallet...");
@@ -241,6 +272,11 @@ export default function Header(props: { title?: string; className?: string }) {
             closeWalletMenu();
             setToggleWalletModal(!toggleWalletModal);
             connectWallet();
+          }}
+          onConnectLedger={() => {
+            closeWalletMenu();
+            setToggleWalletModal(!toggleWalletModal);
+            connectLedger();
           }}
         />
 
