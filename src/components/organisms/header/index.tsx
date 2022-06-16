@@ -24,7 +24,6 @@ import {
 } from "helpers/storage";
 import { LiquidSigningCosmWasmClient } from "lib/cosmwasm";
 import { GasPrice } from "@cosmjs/stargate";
-import { Currency } from "types";
 import { arch } from "lib";
 
 const StyledLogo = styled(Logo)`

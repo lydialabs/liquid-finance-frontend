@@ -1,5 +1,7 @@
+/* eslint-disable */
 import { bech32 } from "bech32";
 import crypto from "crypto";
+// @ts-ignore
 import CosmosApp from "ledger-cosmos-js";
 import Ripemd160 from "ripemd160";
 import sortKeys from "sort-keys";
@@ -24,7 +26,6 @@ async function getTransport() {
     }
 
     if (await TransportWebHID.isSupported()) {
-      console.log("TransportWebHID");
       const transport = await TransportWebHID.create();
       return { transport, type: "WebHID" };
     }
