@@ -203,7 +203,7 @@ export default function Header(props: { title?: string; className?: string }) {
 
   const handleChangeWallet = () => {
     closeWalletMenu();
-    setToggleWalletModal(false);
+    setToggleWalletModal(true);
   };
 
   const handleDisconnectWallet = async () => {
