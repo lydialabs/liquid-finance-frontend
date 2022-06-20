@@ -12,6 +12,7 @@ import { TypeNotification } from "store";
 type NotificationProps = {
   closeToast?: () => void;
   summary?: string;
+  title: string;
   type?: TypeNotification;
   show: boolean;
 };
@@ -62,7 +63,7 @@ const TransactionInfo = styled(Flex)``;
 
 const TransactionInfoBody = styled.div``;
 
-const Notification = ({ summary, type, show }: NotificationProps) => {
+const Notification = ({ summary, type, show, title }: NotificationProps) => {
   return (
     <NotificationContainer show={show}>
       <div
@@ -85,7 +86,7 @@ const Notification = ({ summary, type, show }: NotificationProps) => {
         <TransactionInfo flexDirection="column">
           <TransactionInfoBody>
             <Typography variant="p" fontWeight={500}>
-              Couldn't complete your transaction.
+              {title || "Couldn't complete your transaction."}
             </Typography>
           </TransactionInfoBody>
           <TransactionInfoBody>

@@ -20,6 +20,7 @@ export interface AppStoreInterface {
   notification: {
     show: boolean;
     message: string;
+    title: string;
     type?: TypeNotification;
   };
   statusInfo:
@@ -56,6 +57,7 @@ export const AppStore = createStore<AppStoreInterface>({
   refreshBalances: false,
   notification: {
     show: false,
+    title: "",
     message: "",
   },
   statusInfo: undefined,

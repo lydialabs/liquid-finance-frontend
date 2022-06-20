@@ -5,7 +5,7 @@ import { AppStoreInterface, useAppStore } from "store";
 
 const Layout: React.FC = ({ children }) => {
   const [{ notification }, updateStore] = useAppStore();
-  const { show: showNotification, message, type } = notification;
+  const { show: showNotification, message, type, title } = notification;
   const [timeoutValue, setTimeoutValue] = useState<
     NodeJS.Timeout | undefined
   >();
@@ -18,6 +18,7 @@ const Layout: React.FC = ({ children }) => {
           draft.notification = {
             show: false,
             message: "",
+            title: "",
             type: undefined,
           };
         });
@@ -55,7 +56,12 @@ const Layout: React.FC = ({ children }) => {
         />
       </Head>
       <>
-        <Notification show={showNotification} type={type} summary={message} />
+        <Notification
+          show={showNotification}
+          type={type}
+          summary={message}
+          title={title}
+        />
         {children}
       </>
     </>

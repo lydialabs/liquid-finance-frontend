@@ -86,12 +86,22 @@ export default function Header(props: { title?: string; className?: string }) {
     updateAppStore,
   ] = useAppStore();
 
+  const openNotification = (notify: any) => {
+    updateAppStore((draf: AppStoreInterface) => {
+      draf.notification = { ...notify, show: true };
+    });
+  };
+
   async function connectLedger() {
     console.log("connect ledger ..");
     try {
       const ledger = await Ledger();
       if (await ledger.isLocked()) {
-        throw new Error(`ledger's status is screen saver`);
+        openNotification({
+          type: "error",
+          title: "Ledger error",
+          message: "Ledger's status is screen saver",
+        });
       }
       const hdPathArray = "44/118/0/0/0".split("/").map(item => Number(item));
 
