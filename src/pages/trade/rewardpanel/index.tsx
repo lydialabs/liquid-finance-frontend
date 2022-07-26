@@ -8,53 +8,89 @@ import Modal from "components/organisms/modal";
 import ModalContent from "components/organisms/modalcontent";
 import { Typography } from "components/theme";
 import { ZERO } from "consts/currency";
-import React from "react";
-import { useAppStore } from "store";
+import React, { useEffect, useState } from "react";
+import { AppStoreInterface, useAppStore } from "store";
 
 import { Flex, Box } from "rebass/styled-components";
 import { showMessageOnBeforeUnload } from "utils/common";
+import { Arch, arch } from "lib";
 
 const RewardSection = () => {
-  const account = "abx";
-  // const addTransaction = useTransactionAdder();
-  // const shouldLedgerSign = useShouldLedgerSign();
+  const [
+    {
+      userAddress: account,
+      archBalance,
+      larchBalance,
+      refreshBalances,
+      ...appStore
+    },
+    updateAppStore,
+  ] = useAppStore();
+  const [claimableValue, setClaimableValue] =
+    useState<{ staked_token: string; native_token: string }>();
 
-  // const changeShouldLedgerSign = useChangeShouldLedgerSign();
+  const [open, setOpen] = React.useState(false);
+  const toggleOpen = () => {
+    setOpen(!open);
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (account) {
+        const claimableValue = await arch.Swap.claimableOf(appStore, account);
+        setClaimableValue(claimableValue);
+      }
+    })();
+  }, [account, refreshBalances]);
+
+  const openNotification = (notify: any) => {
+    updateAppStore((draf: AppStoreInterface) => {
+      draf.notification = { ...notify, show: true };
+    });
+  };
 
   const handleRewardClaim = () => {
     window.addEventListener("beforeunload", showMessageOnBeforeUnload);
-
-    // if (bnJs.contractSettings.ledgerSettings.actived) {
-    //   changeShouldLedgerSign(true);
-    // }
-
-    // bnJs
-    //   .inject({ account })
-    //   .Rewards.claimRewards()
-    //   .then(res => {
-    //     addTransaction(
-    //       { hash: res.result }, //
-    //       {
-    //         summary: `Claimed ${reward?.dp(5).toFormat()} BALN.`,
-    //         pending: `Claiming rewards...`,
-    //       }
-    //     );
-    //     setRewardTx(res.result);
-    //     toggleOpen();
-    //   })
-    //   .catch(e => {
-    //     console.error("error", e);
-    //   })
-    //   .finally(() => {
-    //     changeShouldLedgerSign(false);
-    //     window.removeEventListener("beforeunload", showMessageOnBeforeUnload);
-    //   });
+    if (account) {
+      openNotification({
+        type: "pending",
+        message: "Claiming rewards...",
+      });
+      arch.Swap.claim(appStore, account)
+        .then(res => {
+          console.log(res);
+          if (res.transactionHash) {
+            openNotification({
+              type: "success",
+              message: `Claimed ${Arch.utils
+                .toFormat(claimableValue?.staked_token || "0")
+                .dp(5)
+                .toFormat()} lARCH and ${Arch.utils
+                .toFormat(claimableValue?.native_token || "0")
+                .dp(5)
+                .toFormat()} ARCH.`,
+            });
+            updateAppStore((draft: AppStoreInterface) => {
+              draft.refreshBalances = true;
+            });
+            setOpen(false);
+          }
+        })
+        .catch(e => {
+          console.error("error", e);
+          setOpen(false);
+          openNotification({
+            type: "error",
+            message: `Couldn't claim lARCH and ARCH. Try again.`,
+          });
+        })
+        .finally(() => {
+          window.removeEventListener("beforeunload", showMessageOnBeforeUnload);
+        });
+    }
   };
 
   // const rewardQuery = useRewardQuery();
-  const reward = new BigNumber(10);
-
-  const hasRewardable = false;
 
   // const [rewardTx, setRewardTx] = React.useState("");
   // const rewardTxStatus = useTransactionStatus(rewardTx);
@@ -62,58 +98,47 @@ const RewardSection = () => {
   //   if (rewardTxStatus === TransactionStatus.success) rewardQuery.refetch();
   // }, [rewardTxStatus, rewardQuery]);
 
-  const [open, setOpen] = React.useState(false);
-  const toggleOpen = () => {
-    setOpen(!open);
-  };
+  // const getRewardsUI = () => {
+  //   if (!hasRewardable && reward?.isZero()) {
+  //     return (
+  //       <>
+  //         <Typography variant="p" as="div">
+  //           Ineligible
+  //           <QuestionHelper
+  //             text={`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
+  //           />
+  //         </Typography>
+  //       </>
+  //     );
+  //   } else if (reward?.isZero()) {
+  //     return (
+  //       <>
+  //         <Typography variant="p" as="div">
+  //           Pending
+  //           <QuestionHelper
+  //             text={`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
+  //           />
+  //         </Typography>
+  //       </>
+  //     );
+  //   } else {
+  //     return (
 
-  const getRewardsUI = () => {
-    if (!hasRewardable && reward?.isZero()) {
-      return (
-        <>
-          <Typography variant="p" as="div">
-            Ineligible
-            <QuestionHelper
-              text={`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
-            />
-          </Typography>
-        </>
-      );
-    } else if (reward?.isZero()) {
-      return (
-        <>
-          <Typography variant="p" as="div">
-            Pending
-            <QuestionHelper
-              text={`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
-            />
-          </Typography>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <Typography variant="p">
-            {`${reward?.dp(5).toFormat()} `}
-            <Typography as="span">BALN</Typography>
-          </Typography>
-          <Button mt={2} onClick={toggleOpen}>
-            Claim
-          </Button>
-        </>
-      );
-    }
-  };
+  //     );
+  //   }
+  // };
 
-  const hasEnoughARCH = false;
+  const beforeARCHAmount = Arch.utils.toFormat(archBalance?.amount || 0);
 
-  const BALNDetails = {
-    "Total balance": new BigNumber(100),
-  };
+  const afterARCHAmount = beforeARCHAmount.plus(
+    claimableValue?.native_token || ZERO
+  );
 
-  const beforeAmount = BALNDetails["Total balance"] || ZERO;
+  const beforelARCHAmount = Arch.utils.toFormat(larchBalance?.amount || 0);
 
-  const afterAmount = beforeAmount.plus(reward || ZERO);
+  const afterlARCHAmount = beforelARCHAmount.plus(
+    Arch.utils.toFormat(claimableValue?.staked_token || 0) || ZERO
+  );
 
   return (
     <Flex
@@ -122,15 +147,43 @@ const RewardSection = () => {
       alignItems="center"
       className="border-right"
     >
-      <Typography variant="p" mb={2}>
-        Balance Tokens
-      </Typography>
-      {reward && getRewardsUI()}
+      <Typography mb={2}>Claimable Tokens</Typography>
+      {claimableValue ? (
+        <>
+          <Typography variant="p">
+            {`${
+              claimableValue
+                ? Arch.utils
+                    .toFormat(claimableValue.staked_token)
+                    .dp(5)
+                    .toFormat()
+                : "-"
+            } `}
+            <Typography as="span">lARCH</Typography>
+          </Typography>
+          <Typography variant="p">
+            {`${
+              claimableValue
+                ? Arch.utils
+                    .toFormat(claimableValue.native_token)
+                    .dp(5)
+                    .toFormat()
+                : "-"
+            } `}
+            <Typography as="span">ARCH</Typography>
+          </Typography>
+          <Button mt={2} onClick={toggleOpen}>
+            Claim
+          </Button>
+        </>
+      ) : (
+        <>-</>
+      )}
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb={1}>
-            Claim Balance Tokens?
+            Claim Tokens?
           </Typography>
 
           <Typography
@@ -139,38 +192,59 @@ const RewardSection = () => {
             textAlign="center"
             fontSize={20}
           >
-            {reward?.dp(5).toFormat() + " BALN"}
+            {`${
+              claimableValue
+                ? Arch.utils
+                    .toFormat(claimableValue.staked_token)
+                    .dp(5)
+                    .toFormat()
+                : "-"
+            } lARCH`}
+          </Typography>
+
+          <Typography
+            variant="p"
+            fontWeight="bold"
+            textAlign="center"
+            fontSize={20}
+          >
+            {`${
+              claimableValue
+                ? Arch.utils
+                    .toFormat(claimableValue.native_token)
+                    .dp(5)
+                    .toFormat()
+                : "-"
+            } ARCH`}
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.dp(5).toFormat() + " BALN"}
+                {beforelARCHAmount.dp(5).toFormat() + " lARCH"}
+              </Typography>
+              <Typography variant="p" textAlign="center">
+                {beforeARCHAmount.dp(5).toFormat() + " ARCH"}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.dp(5).toFormat() + " BALN"}
+                {afterlARCHAmount.dp(5).toFormat() + " lARCH"}
+              </Typography>
+              <Typography variant="p" textAlign="center">
+                {afterARCHAmount.dp(5).toFormat() + " lARCH"}
               </Typography>
             </Box>
           </Flex>
-
-          <Typography textAlign="center">
-            To earn network fees, stake BALN from your wallet.
-          </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>
               Not now
             </TextButton>
-            <Button
-              onClick={handleRewardClaim}
-              fontSize={14}
-              disabled={!hasEnoughARCH}
-            >
+            <Button onClick={handleRewardClaim} fontSize={14}>
               Claim
             </Button>
           </Flex>
@@ -239,8 +313,6 @@ const NetworkFeeSection = () => {
   const toggleOpen = () => {
     setOpen(!open);
   };
-
-  const hasEnoughARCH = false;
 
   const getNetworkFeesUI = () => {
     if (hasNetworkFees && !hasFee) {
@@ -316,11 +388,7 @@ const NetworkFeeSection = () => {
             <TextButton onClick={toggleOpen} fontSize={14}>
               Not now
             </TextButton>
-            <Button
-              onClick={handleFeeClaim}
-              fontSize={14}
-              disabled={!hasEnoughARCH}
-            >
+            <Button onClick={handleFeeClaim} fontSize={14}>
               Claim
             </Button>
           </Flex>
@@ -363,13 +431,9 @@ const RewardsPanel = () => {
         <Flex alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h2">Rewards (24hr)</Typography>
         </Flex>
-
         <Flex my={5}>
           <Box width={1 / 2} className="border-right">
-            <Typography textAlign="center">ARCH</Typography>
-            <Typography variant="p" textAlign="center">
-              {Reward === "" ? "-" : (parseFloat(Reward) / 1000000).toFixed(5)}
-            </Typography>
+            <RewardSection />
           </Box>
 
           <Box width={1 / 2}>

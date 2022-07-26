@@ -366,7 +366,7 @@ const PoolRecordQ = ({
       <DataText>
         <Typography fontSize={16}>{`${
           orderInfoOf
-            ? Arch.utils.toFormat(orderInfoOf.native).dp(5).toFormat()
+            ? Arch.utils.toFormat(orderInfoOf.last_deposit).dp(5).toFormat()
             : "..."
         } ${"ARCH" || "..."}`}</Typography>
         <Typography color="text1">{`${0} ${"lARCH" || "..."}`}</Typography>
