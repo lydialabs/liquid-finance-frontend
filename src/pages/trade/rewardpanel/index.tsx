@@ -429,7 +429,7 @@ const RewardsPanel = () => {
     <div>
       <BoxPanel bg="bg2">
         <Flex alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h2">Rewards (24hr)</Typography>
+          <Typography variant="h2">Rewards</Typography>
         </Flex>
         <Flex my={5}>
           <Box width={1 / 2} className="border-right">
