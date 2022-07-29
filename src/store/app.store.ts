@@ -35,6 +35,8 @@ export interface AppStoreInterface {
         issued: string;
         native: string;
         height: string;
+        node_id: string;
+        last_deposit: string;
       }
     | undefined;
   statusStakingInfo:

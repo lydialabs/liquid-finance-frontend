@@ -18,13 +18,11 @@ export default class Swap extends Contract {
     return this.query(appStore, this.contractAddress, entrypoint);
   }
   add(appStore: any, account: string, amount: string) {
-    debugger;
     const entrypoint = {
       add: {},
     };
     // const funds = coins(Arch.utils.toLoop(amount).toFixed(), "uconst");
     const funds = coins(Arch.utils.toLoop(amount).toFixed(), "utorii");
-    console.log("funds", funds);
     return this.excute(
       appStore,
       account,
@@ -44,5 +42,13 @@ export default class Swap extends Contract {
       claim: {},
     };
     return this.excute(appStore, account, this.contractAddress, entrypoint);
+  }
+  claimableOf(appStore: any, account: string) {
+    const entrypoint = {
+      claimable_of: {
+        address: account,
+      },
+    };
+    return this.query(appStore, this.contractAddress, entrypoint);
   }
 }
